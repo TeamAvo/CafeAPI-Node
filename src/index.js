@@ -10,7 +10,8 @@ const morgan = require('morgan')
 
 const { startDB, } = require('./database/mongo')
 const { updateVote, } = require('./database/mealEntries')
-const { getTimeRange, isValidTime } = require('./time/time')
+const { isValidTime, isValidBool, isValidEmail } = require('./parsing/time')
+const { checkAddEmail } = require('./database/emails')
 
 const app = express()
 
@@ -25,11 +26,33 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/', async (req, res) => {
     let time = req.body.time
+    let vote = req.body.vote
+    let email = req.body.email
+
     if(!isValidTime(time)){
         res.status(400)
-        res.json({message: 'Invalid time json'})
+        res.json({message: 'Invalid `time` json data'})
         return
     }
+
+    if(!isValidBool(vote)){
+        res.status(400)
+        res.json({message: 'Invalid `vote` json data'})
+        return
+    }
+
+    if(!isValidEmail(email)){
+        res.status(400)
+        res.json({message: 'Invalid `email` format'})
+        return
+    }
+
+    if(!(await checkAddEmail(email, time))){
+        res.status(403)
+        res.json({message: 'Vote has already been registered with this email'})
+        return
+    }
+
     await updateVote(time, req.body.vote)
     console.log("Vote Added/Updated")
     res.status(204).send()
