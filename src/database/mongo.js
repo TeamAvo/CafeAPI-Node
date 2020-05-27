@@ -15,13 +15,6 @@ async function getDB(){
     return database
 }
 
-/* TODO: Add closing to use less runtime when one heroku server */
-// async function closeDB(){
-//     if(!client){
-//         await client.close()
-//     }
-// }
-
 module.exports = {
     startDB,
     getDB,

@@ -22,11 +22,13 @@ const isMeal = (num) => {
 function isValidTime(time){
     if(time.year === undefined || time.month === undefined
         || time.day === undefined || time.meal === undefined){
+        console.log("Subtime undefined")
         return false
     }
 
-    if(isYear(time.year) || isMonth(time.month) || 
-        isDay(time.day) || isMeal(time.meal)){
+    if(!isYear(time.year) || !isMonth(time.month) || 
+        !isDay(time.day) || !isMeal(time.meal)){
+        console.log("Subtime Incorrect Range")
         return false
     }
     

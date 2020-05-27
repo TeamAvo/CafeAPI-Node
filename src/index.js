@@ -27,17 +27,18 @@ app.post('/', async (req, res) => {
     let time = req.body.time
     if(!isValidTime(time)){
         res.status(400)
-        res.render('Error: Incorrect time entry')
+        res.json({message: 'Invalid time json'})
         return
     }
     await updateVote(time, req.body.vote)
+    console.log("Vote Added/Updated")
+    res.status(204).send()
 })
 
 startDB().then(
     async () => {
-        await updateVote(
-            {year: 2020, month: 05, day: 27, meal: 0},
-            true
-        )
+        app.listen(port, () => {
+            console.log(`Listening to port https://localhost:${port}/`)
+        })
     }
 )
