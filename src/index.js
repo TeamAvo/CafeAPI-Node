@@ -10,7 +10,7 @@ const morgan = require('morgan')
 
 const { startDB, } = require('./database/mongo')
 const { updateVote, } = require('./database/mealEntries')
-const { isValidTime, isValidBool, isValidEmail } = require('./parsing/time')
+const { isValidTime, isValidBool, isValidEmail } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
 
 const app = express()
