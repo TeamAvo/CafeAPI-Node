@@ -43,8 +43,13 @@ function isValidEmail(email){
     return emailRegex.test(email)
 }
 
+function isValidQuery(arr){
+    return _.isEmpty(_.xor(arr, ['y1', 'm1', 'd1', 'y2', 'm2', 'd1']))
+}
+
 module.exports = {
     isValidTime,
     isValidBool,
     isValidEmail,
+    isValidQuery,
 }

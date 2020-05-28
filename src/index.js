@@ -10,7 +10,7 @@ const morgan = require('morgan')
 
 const { startDB, } = require('./database/mongo')
 const { updateVote, } = require('./database/mealEntries')
-const { isValidTime, isValidBool, isValidEmail } = require('./parsing/parameters')
+const { isValidTime, isValidBool, isValidEmail, isValidQuery } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
 
 const app = express()
@@ -31,35 +31,43 @@ app.post('/', async (req, res) => {
 
     if(!isValidTime(time)){
         res.status(400)
-        res.json({message: 'Invalid `time` json data'})
+        res.json({message: 'POST Error: Invalid `time` json data'})
         return
     }
 
     if(!isValidBool(vote)){
         res.status(400)
-        res.json({message: 'Invalid `vote` json data'})
+        res.send({message: 'POST Error: Invalid `vote` json data'})
         return
     }
 
     if(!isValidEmail(email)){
         res.status(400)
-        res.json({message: 'Invalid `email` format'})
+        res.send({message: 'POST Error: Invalid `email` format'})
         return
     }
 
     if(!(await checkAddEmail(email, time))){
         res.status(403)
-        res.json({message: 'Vote has already been registered with this email'})
+        res.send({message: 'POST Error: Vote has already been registered with this email'})
         return
     }
 
     await updateVote(time, req.body.vote)
-    console.log("Vote Added/Updated")
-    res.status(200).send({message: 'Success'})
+    console.log("POST Request: Vote Added/Updated")
+    res.status(200).send({message: 'POST Success: Vote Added/Updated'})
 })
 
 app.get('/', async (req, res) => {
-    console.log(req.params)
+    const keys = Object.keys(req.query)
+    if(isValidQuery(keys)){
+        res.status(400)
+        res.send({message: "GET Error: Invalid parameters"})
+        return
+    }
+
+    
+
     res.send()
 })
 
