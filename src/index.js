@@ -55,7 +55,12 @@ app.post('/', async (req, res) => {
 
     await updateVote(time, req.body.vote)
     console.log("Vote Added/Updated")
-    res.status(204).send()
+    res.status(200).send({message: 'Success'})
+})
+
+app.get('/', async (req, res) => {
+    console.log(req.params)
+    res.send()
 })
 
 startDB().then(
