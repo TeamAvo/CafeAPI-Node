@@ -14,8 +14,8 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
 {
     "time": {
         "year": "4 digit number for year)",
-        "month": "00 => 11, 2 digit number for month",
-        "day": "00 => 30, 2 digit number for day",
+        "month": "0 => 11, 2 digit number for month",
+        "day": "0 => 30, 2 digit number for day",
         "meal": "Breakfast = 0, Lunch = 1, Dinner = 2"
     },
     "email": "email of the voter",
@@ -49,8 +49,8 @@ Code - `204`
     {
         "time": {
             "year": "4 digit number for year",
-            "month": "00 => 11, 2 digit number for month",
-            "day": "00 => 30, 2 digit number for day",
+            "month": "0 => 11, 2 digit number for month",
+            "day": "0 => 30, 2 digit number for day",
             "meal": "Breakfast = 0, Lunch = 1, Dinner = 2"
         },
         "vote": "# of votes"
