@@ -12,14 +12,14 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
 
 ```json
 {
-    time: {
-        year: "4 digit number for year)",
-        month: "00 => 11, 2 digit number for month",
-        day: "00 => 30, 2 digit number for day",
-        meal: "Breakfast = 0, Lunch = 1, Dinner = 2"
+    "time": {
+        "year": "4 digit number for year)",
+        "month": "00 => 11, 2 digit number for month",
+        "day": "00 => 30, 2 digit number for day",
+        "meal": "Breakfast = 0, Lunch = 1, Dinner = 2"
     },
-    email: "email of the voter",
-    vote: "true if upvote false if downvote"
+    "email": "email of the voter",
+    "vote": "true if upvote false if downvote"
 }
 ```
 
@@ -47,21 +47,21 @@ Code - `204`
 ```json
 [
     {
-        time: {
-            year: "4 digit number for year",
-            month: "00 => 11, 2 digit number for month",
-            day: "00 => 30, 2 digit number for day",
-            meal: "Breakfast = 0, Lunch = 1, Dinner = 2"
+        "time": {
+            "year": "4 digit number for year",
+            "month": "00 => 11, 2 digit number for month",
+            "day": "00 => 30, 2 digit number for day",
+            "meal": "Breakfast = 0, Lunch = 1, Dinner = 2"
         },
-        vote: "# of votes"
+        "vote": "# of votes"
     },
     {
-        time: "Next set of times in the sequence",
-        vote: "# of votes"
+        "time": "Next set of times in the sequence",
+        "vote": "# of votes"
     },
     {
-        time: "Next set of times in the sequence",
-        vote: "# of votes"
+        "time": "Next set of times in the sequence",
+        "vote": "# of votes"
     },
 ]
 ```
