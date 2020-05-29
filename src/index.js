@@ -1,31 +1,40 @@
+// Importing Environmental Variables
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 
+// Importing external libraries
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
 
+// Importing local script functions
 const { startDB, } = require('./database/mongo')
 const { updateVote, } = require('./database/mealEntries')
 const { isValidTime, isValidBool, isValidEmail, isValidQuery } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
 const { getTimeRange } = require('./time/time')
 
+
+// Initializing App
 const app = express()
 
+// Defining port
 // God im so mature
 const port = 6969
 
+// Setting up app to use external libraries
 app.use(helmet())
 app.use(cors())
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+/* POST */
 app.post('/', async (req, res) => {
+    // Getting parameters from API
     let time = req.body.time
     let vote = req.body.vote
     let email = req.body.email
@@ -50,13 +59,21 @@ app.post('/', async (req, res) => {
         return
     }
 
-    if(!(await checkAddEmail(email, time))){
+    if(!(await checkAddEmail(email, time).catch(error => {
+        res.status(500)
+        res.send({message: 'POST Error: MongoDB connection error - Collection: Emails'})
+        console.error(error)
+    }))){
         res.status(403)
         res.send({message: 'POST Error: Vote has already been registered with this email'})
         return
     }
 
-    await updateVote(time, req.body.vote)
+    await updateVote(time, req.body.vote).catch(error => {
+        res.status(500)
+        res.send({message: 'POST Error: MongoDB connection error - Collection: Voting'})
+        console.error(error)
+    })
     console.log("POST Request: Vote Added/Updated")
     res.status(200).send({message: 'POST Success: Vote Added/Updated'})
 })
@@ -71,7 +88,11 @@ app.get('/', async (req, res) => {
         return
     }
 
-    const data = await getTimeRange(query).catch(console.error())
+    const data = await getTimeRange(query).catch(error => {
+        res.status(500)
+        res.send({message: 'GET Error: MongoDB connection error - Collection: Voting'})
+        console.error(error)
+    })
     res.send(data)
 })
 
