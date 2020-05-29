@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const isYear = (num) => {
     return num > 999 && num <= 9999 && typeof(num) === 'number'
 }

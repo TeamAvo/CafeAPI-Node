@@ -12,6 +12,7 @@ const { startDB, } = require('./database/mongo')
 const { updateVote, } = require('./database/mealEntries')
 const { isValidTime, isValidBool, isValidEmail, isValidQuery } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
+const { getTimeRange } = require('./time/time')
 
 const app = express()
 
@@ -34,6 +35,8 @@ app.post('/', async (req, res) => {
         res.json({message: 'POST Error: Invalid `time` json data'})
         return
     }
+
+    time = {date: new Date(time.year, time.month, time.day), meal: time.meal}
 
     if(!isValidBool(vote)){
         res.status(400)
@@ -59,16 +62,17 @@ app.post('/', async (req, res) => {
 })
 
 app.get('/', async (req, res) => {
-    const keys = Object.keys(req.query)
+    const query = req.query
+    const keys = Object.keys(query)
+    
     if(isValidQuery(keys)){
         res.status(400)
         res.send({message: "GET Error: Invalid parameters"})
         return
     }
 
-    
-
-    res.send()
+    const data = await getTimeRange(query).catch(console.error())
+    res.send(data)
 })
 
 startDB().then(
