@@ -99,7 +99,7 @@ app.get('/', async (req, res) => {
 startDB().then(
     async () => {
         app.listen(process.env.PORT || port, () => {
-            console.log(`Listening to port https://localhost:${port}/`)
+            console.log(`Listening to port https://localhost:${process.env.PORT || port}/`)
         })
     }
 )
