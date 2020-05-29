@@ -64,7 +64,7 @@ app.post('/', async (req, res) => {
 app.get('/', async (req, res) => {
     const query = req.query
     const keys = Object.keys(query)
-    
+
     if(isValidQuery(keys)){
         res.status(400)
         res.send({message: "GET Error: Invalid parameters"})
@@ -77,7 +77,7 @@ app.get('/', async (req, res) => {
 
 startDB().then(
     async () => {
-        app.listen(port, () => {
+        app.listen(process.env.PORT || port, () => {
             console.log(`Listening to port https://localhost:${port}/`)
         })
     }
