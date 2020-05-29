@@ -2,7 +2,7 @@
 
 ## Summary
 
-This is a node.js + express.js + MongoDB api that counts votes. The votes represent the students enjoyment of the schools food. Showing the opinions surrounding the food allows students to judge if the meal is worth going to.
+This is a node.js + express.js + MongoDB api that counts votes. The votes represent the students opinions of the schools meals. Showing the opinions surrounding the food allows students to judge if the meal is worth going to.
 
 ## Requests and Responses
 
