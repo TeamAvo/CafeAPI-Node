@@ -40,7 +40,7 @@ Code - `204`
 
 `y1, m1, d1` and `y2, m2, d2` define the beginning and end of a range of days that are queried.
 
-- (inclusive : exclusive]
+- [inclusive : exclusive)
 
 #### Response
 
