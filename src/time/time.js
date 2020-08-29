@@ -2,6 +2,7 @@ const { getDB } = require('../database/mongo')
 
 const colName = 'Voting'
 
+
 // TODO: Add parameters from range into this function
 // TODO: Return all items found or return an empty vote template
 async function getTimeRange(query) {
