@@ -36,61 +36,62 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.post('/', async (req, res) => {
     // Getting parameters from API
     let time = req.body.time
+    let meal = req.body.meal
     let vote = req.body.vote
     let email = req.body.email
 
-    if(!isValidTime(time)){
+    if (!isValidTime(time)) {
         res.status(400)
-        res.json({message: 'POST Error: Invalid `time` json data'})
+        res.json({ message: 'POST Error: Invalid `time` json data' })
         return
     }
 
-    time = {date: new Date(time.year, time.month, time.day), meal: time.meal}
+    time = { date: new Date(time), meal: meal }
 
-    if(!isValidBool(vote)){
+    if (!isValidVote(vote)) {
         res.status(400)
-        res.send({message: 'POST Error: Invalid `vote` json data'})
+        res.send({ message: 'POST Error: Invalid `vote` json data' })
         return
     }
 
-    if(!isValidEmail(email)){
+    if (!isValidEmail(email)) {
         res.status(400)
-        res.send({message: 'POST Error: Invalid `email` format'})
+        res.send({ message: 'POST Error: Invalid `email` format' })
         return
     }
 
-    if(!(await checkAddEmail(email, time).catch(error => {
+    if (!(await checkAddEmail(email, time).catch(error => {
         res.status(500)
-        res.send({message: 'POST Error: MongoDB connection error - Collection: Emails'})
+        res.send({ message: 'POST Error: MongoDB connection error - Collection: Emails' })
         console.error(error)
-    }))){
+    }))) {
         res.status(403)
-        res.send({message: 'POST Error: Vote has already been registered with this email'})
+        res.send({ message: 'POST Error: Vote has already been registered with this email' })
         return
     }
 
     await updateVote(time, req.body.vote).catch(error => {
         res.status(500)
-        res.send({message: 'POST Error: MongoDB connection error - Collection: Voting'})
+        res.send({ message: 'POST Error: MongoDB connection error - Collection: Voting' })
         console.error(error)
     })
     console.log("POST Request: Vote Added/Updated")
-    res.status(200).send({message: 'POST Success: Vote Added/Updated'})
+    res.status(200).send({ message: 'POST Success: Vote Added/Updated' })
 })
 
 app.get('/', async (req, res) => {
     const query = req.query
     const keys = Object.keys(query)
 
-    if(isValidQuery(keys)){
+    if (isValidQuery(keys)) {
         res.status(400)
-        res.send({message: "GET Error: Invalid parameters"})
+        res.send({ message: "GET Error: Invalid parameters" })
         return
     }
 
     const data = await getTimeRange(query).catch(error => {
         res.status(500)
-        res.send({message: 'GET Error: MongoDB connection error - Collection: Voting'})
+        res.send({ message: 'GET Error: MongoDB connection error - Collection: Voting' })
         console.error(error)
     })
     res.send(data)

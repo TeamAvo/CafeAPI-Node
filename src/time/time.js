@@ -2,23 +2,17 @@ const { getDB } = require('../database/mongo')
 
 const colName = 'Voting'
 
-
 // TODO: Add parameters from range into this function
 // TODO: Return all items found or return an empty vote template
-async function getTimeRange(query){
+async function getTimeRange(query) {
     const db = await getDB()
     let result = await db.collection(colName).find(
-        { 'time.date': { $gte: new Date(query.y1, query.m1, query.d1), $lt: new Date(query.y2, query.m2, query.d2)} }
+        { 'time.date': { $gte: new Date(query.date1), $lt: new Date(query.date2) } }
     ).toArray()
 
     result.map(el => {
         const date = new Date(el.time.date)
-        el.time = {
-            year: date.getFullYear(),
-            month: date.getMonth(),
-            day: date.getDate(),
-            meal: el.time.meal
-        }
+        el.time = date
     })
 
     return result

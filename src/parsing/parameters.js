@@ -1,57 +1,40 @@
 const _ = require('lodash')
 
-const isYear = (num) => {
-    return num > 999 && num <= 9999 && typeof(num) === 'number'
-}
+function isValidTime(time) {
+    let t = new Date(time)
 
-const isMonth = (num) => {
-    return num >= 0 && num <= 11 && typeof(num) === 'number'
-}
-
-const isDay = (num) => {
-    return num >= 0 && num <= 30 && typeof(num) === 'number'
-}
-
-const isMeal = (num) => {
-    return num >= 0 && num <= 2 && typeof(num) === 'number'
-}
-
-function isValidTime(time){
-    if(time.year === undefined || time.month === undefined
-        || time.day === undefined || time.meal === undefined){
+    if (t === undefined) {
         console.log("Subtime undefined")
         return false
     }
-
-    if(!isYear(time.year) || !isMonth(time.month) || 
-        !isDay(time.day) || !isMeal(time.meal)){
-        console.log("Subtime Incorrect Range")
-        return false
-    }
-    
     return true
 }
 
-function isValidBool(vote){
-    if(vote === undefined || typeof(vote) !== 'boolean'){
+function isValidVote(vote) {
+    if (vote === undefined || typeof (vote) !== 'number') {
         return false
     }
-    return true
+
+    if (vote >= 0 && vote <= 5) {
+        return true
+    } else {
+        return false
+    }
 }
 
-function isValidEmail(email){
+function isValidEmail(email) {
     // This may need to change as we will use hashes instead of raw emails
     const emailRegex = RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
     return emailRegex.test(email)
 }
 
-function isValidQuery(arr){
-    return _.isEmpty(_.xor(arr, ['y1', 'm1', 'd1', 'y2', 'm2', 'd1']))
+function isValidQuery(arr) {
+    return _.isEmpty(_.xor(arr, ['date1', 'date2']))
 }
 
 module.exports = {
     isValidTime,
-    isValidBool,
+    isValidVote,
     isValidEmail,
     isValidQuery,
 }

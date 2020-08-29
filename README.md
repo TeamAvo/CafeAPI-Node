@@ -12,12 +12,8 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
 
 ```json
 {
-    "time": {
-        "year": "4 digit number for year)",
-        "month": "0 => 11, 2 digit number for month",
-        "day": "0 => 30, 2 digit number for day",
-        "meal": "Breakfast = 0, Lunch = 1, Dinner = 2"
-    },
+    "time": "Date type variable (new Date())",
+    "meal": "Breakfast = 0, Lunch = 1, Dinner = 2",
     "email": "email of the voter",
     "vote": "true if upvote false if downvote"
 }
@@ -31,14 +27,8 @@ Code - `204`
 
 #### Request Parameters
 
-- y1 = Start Year
-- y2 = End Year
-- m1 = Start Month
-- m2 = End Month
-- d1 = Start Day
-- d2 = End Day
-
-`y1, m1, d1` and `y2, m2, d2` define the beginning and end of a range of days that are queried.
+- date1 = Date type variable of the start day
+- date2 = Date type variable of the end day
 
 - [inclusive : exclusive)
 
@@ -47,12 +37,7 @@ Code - `204`
 ```json
 [
     {
-        "time": {
-            "year": "4 digit number for year",
-            "month": "0 => 11, 2 digit number for month",
-            "day": "0 => 30, 2 digit number for day",
-            "meal": "Breakfast = 0, Lunch = 1, Dinner = 2"
-        },
+        "time": "Date type variable (new Date())",
         "vote": "# of votes"
     },
     {
