@@ -83,11 +83,11 @@ app.get('/', async (req, res) => {
     const query = req.query
     const keys = Object.keys(query)
 
-    if (isValidQuery(keys)) {
-        res.status(400)
-        res.send({ message: "GET Error: Invalid parameters" })
-        return
-    }
+    // if (isValidQuery(keys)) {
+    //     res.status(400)
+    //     res.send({ message: "GET Error: Invalid parameters" })
+    //     return
+    // }
 
     const data = await getTimeRange(query).catch(error => {
         res.status(500)
