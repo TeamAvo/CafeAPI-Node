@@ -11,10 +11,10 @@ async function getTimeRange(query) {
         { 'time.date': { $gte: new Date(query.date1), $lt: new Date(query.date2) } }
     ).toArray()
 
-    result.map(el => {
-        const date = new Date(el.time.date)
-        el.time = date
-    })
+    // result.map(el => {
+    //     const date = new Date(el.time.date)
+    //     el.time = date
+    // })
 
     return result
 }
