@@ -11,7 +11,7 @@ function isValidTime(time) {
 }
 
 function isValidVote(vote) {
-    if (vote === undefined || typeof (vote) !== 'number') {
+    if (vote === undefined) {
         return false
     }
 
@@ -25,11 +25,21 @@ function isValidVote(vote) {
 function isValidEmail(email) {
     // This may need to change as we will use hashes instead of raw emails
     const emailRegex = RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
-    return emailRegex.test(email)
+    if (!emailRegex.test(email)) {
+        return false
+    } else {
+        if (!email.endsWith('@avonoldfarms.com')) {
+            return false
+        }
+    }
+    return true
 }
 
 function isValidQuery(arr) {
-    return _.isEmpty(_.xor(arr, ['date1', 'date2']))
+    if (arr.date1 === undefined || arr.date2 === undefined) {
+        return false
+    }
+    return true
 }
 
 module.exports = {

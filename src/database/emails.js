@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 const colName = 'Emails'
 
-async function checkAddEmail(email, time){
+async function checkAddEmail(email, time) {
     const db = await getDB()
     let entry = await db.collection(colName).findOne(
         {
@@ -11,7 +11,7 @@ async function checkAddEmail(email, time){
         }
     )
 
-    if(entry !== null && inArray(entry.times, time)){
+    if (entry !== null && inArray(entry.times, time)) {
         return false
     }
 
@@ -21,7 +21,7 @@ async function checkAddEmail(email, time){
         }
     )
 
-    if(!entry){
+    if (!entry) {
         await db.collection(colName).insertOne(
             {
                 email: email,
@@ -30,17 +30,17 @@ async function checkAddEmail(email, time){
         )
         return true
     }
-    
+
     await db.collection(colName).updateOne(
         { email: email },
-        { $push: {times: time}}
+        { $push: { times: time } }
     )
     return true
 }
 
-function inArray(arr, target){
-    for(let i = 0; i < arr.length; i++){
-        if(_.isEqual(arr[i], target)){
+function inArray(arr, target) {
+    for (let i = 0; i < arr.length; i++) {
+        if (_.isEqual(arr[i], target)) {
             return true
         }
     }

@@ -6,8 +6,12 @@ async function updateVote(time, vote) {
     const db = await getDB()
     await db.collection(colName).updateOne(
         { time: time },
-        { $inc: { vote: vote } },
-        { $inc: { total: 1 } },
+        {
+            $inc: {
+                vote: vote,
+                total: 1
+            }
+        },
         { upsert: true }
     )
 }

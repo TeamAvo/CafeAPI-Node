@@ -15,7 +15,7 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
     "time": "Date type variable (new Date())",
     "meal": "Breakfast = 0, Lunch = 1, Dinner = 2",
     "email": "email of the voter",
-    "vote": "true if upvote false if downvote"
+    "vote": "points value (range: 0~5)"
 }
 ```
 
@@ -30,23 +30,29 @@ Code - `204`
 - date1 = Date type variable of the start day
 - date2 = Date type variable of the end day
 
-- [inclusive : exclusive)
-
 #### Response
 
 ```json
 [
     {
         "time": "Date type variable (new Date())",
-        "vote": "# of votes"
+        "vote": "# of points",
+        "total": "The number of people who already vote."
     },
     {
         "time": "Next set of times in the sequence",
-        "vote": "# of votes"
+        "vote": "# of points",
+        "total": "The number of people who already vote."
     },
     {
         "time": "Next set of times in the sequence",
-        "vote": "# of votes"
+        "vote": "# of points",
+        "total": "The number of people who already vote."
     },
 ]
+```
+
+Calculation:
+```
+    Math.round(vote/total)
 ```

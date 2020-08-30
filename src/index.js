@@ -13,7 +13,7 @@ const morgan = require('morgan')
 // Importing local script functions
 const { startDB, } = require('./database/mongo')
 const { updateVote, } = require('./database/mealEntries')
-const { isValidTime, isValidBool, isValidEmail, isValidQuery } = require('./parsing/parameters')
+const { isValidTime, isValidVote, isValidEmail, isValidQuery } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
 const { getTimeRange } = require('./time/time')
 
@@ -35,10 +35,16 @@ app.use(bodyParser.urlencoded({ extended: true }))
 /* POST */
 app.post('/', async (req, res) => {
     // Getting parameters from API
-    let time = req.body.time
+    let time = new Date(req.body.time)
     let meal = req.body.meal
-    let vote = req.body.vote
     let email = req.body.email
+    let vote = req.body.vote
+
+    // Debug
+    // console.log(time)
+    // console.log(meal)
+    // console.log(email)
+    // console.log(vote)
 
     if (!isValidTime(time)) {
         res.status(400)
@@ -46,7 +52,7 @@ app.post('/', async (req, res) => {
         return
     }
 
-    time = { date: new Date(time), meal: meal }
+    time = { date: new Date(time.toDateString()), meal: meal }
 
     if (!isValidVote(vote)) {
         res.status(400)
@@ -83,11 +89,11 @@ app.get('/', async (req, res) => {
     const query = req.query
     const keys = Object.keys(query)
 
-    // if (isValidQuery(keys)) {
-    //     res.status(400)
-    //     res.send({ message: "GET Error: Invalid parameters" })
-    //     return
-    // }
+    if (isValidQuery(keys)) {
+        res.status(400)
+        res.send({ message: "GET Error: Invalid parameters" })
+        return
+    }
 
     const data = await getTimeRange(query).catch(error => {
         res.status(500)
