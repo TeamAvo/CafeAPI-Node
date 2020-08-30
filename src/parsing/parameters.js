@@ -15,7 +15,7 @@ function isValidVote(vote) {
         return false
     }
 
-    if (vote >= 0 && vote <= 5) {
+    if (vote >= 0.5 && vote <= 5) {
         return true
     } else {
         return false

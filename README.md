@@ -15,7 +15,7 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
     "time": "Date type variable (new Date())",
     "meal": "Breakfast = 0, Lunch = 1, Dinner = 2",
     "email": "email of the voter",
-    "vote": "points value (range: 0~5)"
+    "vote": "points value (range: 0.5~5, inclusive)"
 }
 ```
 
