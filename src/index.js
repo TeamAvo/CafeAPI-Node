@@ -11,11 +11,13 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 
 // Importing local script functions
-const { startDB, } = require('./database/mongo')
-const { updateVote, } = require('./database/mealEntries')
+const { startDB } = require('./database/mongo')
+const { updateVote } = require('./database/mealEntries')
+const { addComment, deleteComment } = require('./database/comment')
 const { isValidTime, isValidVote, isValidString, isValidMeal, isValidBool, isValidEmail, isValidComment, isValidQuery } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
 const { getTimeRange } = require('./time/time')
+const { ObjectID } = require('mongodb')
 
 
 // Initializing App
@@ -112,6 +114,14 @@ app.post('/comment', async (req, res) => {
     let like = req.body.like
     let comment = req.body.comment
 
+    // console.log(date)
+    // console.log(name)
+    // console.log(email)
+    // console.log(pw)
+    // console.log(meal_type)
+    // console.log(like)
+    // console.log(comment)
+
     if (!isValidTime(date)) {
         res.status(400)
         res.send({ message: "GET Error: Invalid date format" })
@@ -121,16 +131,6 @@ app.post('/comment', async (req, res) => {
     if (!isValidString(name)) {
         res.status(400)
         res.send({ message: "GET Error: Invalid name" })
-        return
-    }
-
-    if (!(await checkAddEmail(email, date).catch(error => {
-        res.status(500)
-        res.send({ message: 'POST Error: MongoDB connection error - Collection: Emails' })
-        console.error(error)
-    }))) {
-        res.status(403)
-        res.send({ message: 'POST Error: Vote has already been registered with this email' })
         return
     }
 
@@ -157,23 +157,46 @@ app.post('/comment', async (req, res) => {
         res.send({ message: "GET Error: Invalid comment text" })
         return
     }
+
+    await addComment(date, name, email, pw, meal_type, like, comment).catch(error => {
+        if (error === 403) {
+            res.status(403)
+            res.send({ message: 'POST Error: Vote has already been registered with this email' })
+            return
+        } else {
+            res.status(500)
+            res.send({ message: 'POST Error: MongoDB connection error - Collection: Comment' })
+            console.error(error)
+            return
+        }
+    })
+    console.log("POST Request: Comment Added")
+    res.status(200).send({ message: 'POST Success: Comment Added' })
 })
 
 app.post('/delete_comment', async (req, res) => {
-    let _id = req.body._id
+    let _id = ObjectID(req.body._id)
     let pw = req.body.pw
 
-    if (!isValidString(_id)) {
-        res.status(400)
-        res.send({ message: "GET Error: Invalid comment id" })
-        return
-    }
+    // if (!isValidString(_id)) {
+    //     res.status(400)
+    //     res.send({ message: "GET Error: Invalid comment id" })
+    //     return
+    // }
 
     if (!isValidString(pw)) {
         res.status(400)
         res.send({ message: "GET Error: Invalid password" })
         return
     }
+
+    await deleteComment(_id, pw).catch(error => {
+        res.status(500)
+        res.send({ message: 'POST Error: MongoDB connection error - Collection: Comment' })
+        console.error(error)
+    })
+    console.log("POST Request: Comment Removed")
+    res.status(200).send({ message: 'POST Success: Comment Removed' })
 })
 
 app.get('/comment', async (req, res) => {
@@ -184,6 +207,8 @@ app.get('/comment', async (req, res) => {
         res.send({ message: "GET Error: Invalid date format" })
         return
     }
+
+    // TODO
 })
 
 startDB().then(
