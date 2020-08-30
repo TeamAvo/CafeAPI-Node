@@ -6,9 +6,9 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
 
 ## Requests and Responses
 
-### POST `/`
+### POST
 
-#### Request
+#### Vote Request `/vote`
 
 ```json
 {
@@ -19,13 +19,36 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
 }
 ```
 
+#### Comment Request `/comment`
+
+```json
+{
+    "date":"Date type variable (new Date())",
+    "name":"User name",
+    "email":"User email",
+    "pw":"Password",
+    "meal_type":"Breakfast, Lunch, Dinner",
+    "like":"bool type, true for like, false for dislike",
+    "comment":"comment (min: 10, max: 500)"
+}
+```
+
+#### Comment Request `/delete_comment`
+
+```json
+{
+    "_id":"comment id",
+    "pw":"Password"
+}
+```
+
 #### Response
 
 Code - `204`
 
 ### GET `/`
 
-#### Request Parameters
+#### Vote Request Parameters `/vote`
 
 - date1 = Date type variable of the start day
 - date2 = Date type variable of the end day
@@ -55,4 +78,22 @@ Code - `204`
 Calculation:
 ```
     Math.round(vote/total)
+```
+
+
+#### Vote Request Parameters `/comment`
+
+- date: date
+
+#### Response
+```json
+{
+    "_id":"comment id",
+    "date":"Date type variable (new Date())",
+    "name":"User name",
+    "email":"User email",
+    "meal_type":"Breakfast, Lunch, Dinner",
+    "like":"bool type, true for like, false for dislike",
+    "comment":"comment (min: 10, max: 500)"
+}
 ```
