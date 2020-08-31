@@ -2,7 +2,7 @@ const { getDB } = require('./mongo')
 
 const colName = 'Comment'
 
-async function addComment(date, name, email, pw, meal_type, like, comment) {
+async function addComment(date, name, email, pw, meal_type, menu, like, comment) {
     const db = await getDB()
 
     let item = await db.collection(colName).findOne(
@@ -13,6 +13,8 @@ async function addComment(date, name, email, pw, meal_type, like, comment) {
         }
     )
 
+    console.log(item)
+
     if (item === null) {
         await db.collection(colName).insertOne(
             {
@@ -21,6 +23,7 @@ async function addComment(date, name, email, pw, meal_type, like, comment) {
                 email: email,
                 pw: pw,
                 meal_type: meal_type,
+                menu: menu,
                 like: like,
                 comment: comment
             }
@@ -40,7 +43,19 @@ async function deleteComment(_id, pw) {
     )
 }
 
+async function getComment(d) {
+    var date = new Date(new Date(d).toDateString())
+
+    const db = await getDB()
+    let data = await db.collection(colName).find(
+        { date: date }
+    ).toArray()
+
+    return data
+}
+
 module.exports = {
     addComment,
-    deleteComment
+    deleteComment,
+    getComment
 }

@@ -28,6 +28,7 @@ This is a node.js + express.js + MongoDB api that counts votes. The votes repres
     "email":"User email",
     "pw":"Password",
     "meal_type":"Breakfast, Lunch, Dinner",
+    "menu":"str, menu, userinput",
     "like":"bool type, true for like, false for dislike",
     "comment":"comment (min: 10, max: 500)"
 }
@@ -93,6 +94,7 @@ Calculation:
     "name":"User name",
     "email":"User email",
     "meal_type":"Breakfast, Lunch, Dinner",
+    "menu":"str, menu, userinput",
     "like":"bool type, true for like, false for dislike",
     "comment":"comment (min: 10, max: 500)"
 }

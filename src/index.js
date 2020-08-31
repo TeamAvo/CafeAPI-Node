@@ -13,7 +13,7 @@ const morgan = require('morgan')
 // Importing local script functions
 const { startDB } = require('./database/mongo')
 const { updateVote } = require('./database/mealEntries')
-const { addComment, deleteComment } = require('./database/comment')
+const { addComment, deleteComment, getComment } = require('./database/comment')
 const { isValidTime, isValidVote, isValidString, isValidMeal, isValidBool, isValidEmail, isValidComment, isValidQuery } = require('./parsing/parameters')
 const { checkAddEmail } = require('./database/emails')
 const { getTimeRange } = require('./time/time')
@@ -111,6 +111,7 @@ app.post('/comment', async (req, res) => {
     let email = req.body.email
     let pw = req.body.pw
     let meal_type = req.body.meal_type
+    let menu = req.body.menu
     let like = req.body.like
     let comment = req.body.comment
 
@@ -146,6 +147,12 @@ app.post('/comment', async (req, res) => {
         return
     }
 
+    if (!isValidString(menu)) {
+        res.status(400)
+        res.send({ message: "GET Error: Invalid meal type" })
+        return
+    }
+
     if (!isValidBool(like)) {
         res.status(400)
         res.send({ message: "GET Error: Invalid bool type" })
@@ -158,7 +165,7 @@ app.post('/comment', async (req, res) => {
         return
     }
 
-    await addComment(date, name, email, pw, meal_type, like, comment).catch(error => {
+    await addComment(date, name, email, pw, meal_type, menu, like, comment).catch(error => {
         if (error === 403) {
             res.status(403)
             res.send({ message: 'POST Error: Vote has already been registered with this email' })
@@ -200,7 +207,8 @@ app.post('/delete_comment', async (req, res) => {
 })
 
 app.get('/comment', async (req, res) => {
-    let date = req.body.date
+    const query = req.query
+    let date = new Date(query.date)
 
     if (!isValidTime(date)) {
         res.status(400)
@@ -208,7 +216,13 @@ app.get('/comment', async (req, res) => {
         return
     }
 
-    // TODO
+    let data = await getComment(date).catch(error => {
+        res.status(500)
+        res.send({ message: 'POST Error: MongoDB connection error - Collection: Comment' })
+        console.error(error)
+    })
+    console.log("GET Request")
+    res.status(200).send(data)
 })
 
 startDB().then(
