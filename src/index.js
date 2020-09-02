@@ -198,9 +198,16 @@ app.post('/delete_comment', async (req, res) => {
     }
 
     await deleteComment(_id, pw).catch(error => {
-        res.status(500)
-        res.send({ message: 'POST Error: MongoDB connection error - Collection: Comment' })
-        console.error(error)
+        if (error === 403) {
+            res.status(403)
+            res.send({ message: 'POST Error: Vote has already been registered with this email' })
+            return
+        } else {
+            res.status(500)
+            res.send({ message: 'POST Error: MongoDB connection error - Collection: Comment' })
+            console.error(error)
+            return
+        }
     })
     console.log("POST Request: Comment Removed")
     res.status(200).send({ message: 'POST Success: Comment Removed' })

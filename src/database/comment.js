@@ -35,12 +35,16 @@ async function addComment(date, name, email, pw, meal_type, menu, like, comment)
 
 async function deleteComment(_id, pw) {
     const db = await getDB()
-    await db.collection(colName).deleteOne(
+    let item = await db.collection(colName).findOne(
         {
             _id: _id,
             pw: pw,
         }
     )
+    if (item === null) {
+        throw 403
+    }
+    await db.collection(colName).deleteOne(item)
 }
 
 async function getComment(d) {
