@@ -37,13 +37,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 /* POST */
 app.post('/vote', async (req, res) => {
     // Getting parameters from API
-    let time = new Date(req.body.time)
+    let time = new Date(new Date(req.body.time).toDateString())
     let meal = req.body.meal
     let email = req.body.email
     let vote = req.body.vote
 
     // Debug
-    // console.log(time)
+    console.log(time)
     // console.log(meal)
     // console.log(email)
     // console.log(vote)
@@ -54,7 +54,7 @@ app.post('/vote', async (req, res) => {
         return
     }
 
-    time = { date: new Date(time.toDateString()), meal: meal }
+    time = { date: time, meal: meal }
 
     if (!isValidVote(vote)) {
         res.status(400)
@@ -115,7 +115,7 @@ app.post('/comment', async (req, res) => {
     let like = req.body.like
     let comment = req.body.comment
 
-    // console.log(date)
+    console.log(date)
     // console.log(name)
     // console.log(email)
     // console.log(pw)
@@ -125,42 +125,49 @@ app.post('/comment', async (req, res) => {
 
     if (!isValidTime(date)) {
         res.status(400)
+        console.log("GET Error: Invalid date format")
         res.send({ message: "GET Error: Invalid date format" })
         return
     }
 
     if (!isValidString(name)) {
         res.status(400)
+        console.log("GET Error: Invalid name")
         res.send({ message: "GET Error: Invalid name" })
         return
     }
 
     if (!isValidString(pw)) {
         res.status(400)
+        console.log("GET Error: Invalid password")
         res.send({ message: "GET Error: Invalid password" })
         return
     }
 
     if (!isValidMeal(meal_type)) {
         res.status(400)
+        console.log("GET Error: Invalid meal type")
         res.send({ message: "GET Error: Invalid meal type" })
         return
     }
 
     if (!isValidString(menu)) {
         res.status(400)
-        res.send({ message: "GET Error: Invalid meal type" })
+        console.log("GET Error: Invalid menu")
+        res.send({ message: "GET Error: Invalid menu" })
         return
     }
 
     if (!isValidBool(like)) {
         res.status(400)
+        console.log("GET Error: Invalid bool type")
         res.send({ message: "GET Error: Invalid bool type" })
         return
     }
 
     if (!isValidComment(comment)) {
         res.status(400)
+        console.log("GET Error: Invalid comment text")
         res.send({ message: "GET Error: Invalid comment text" })
         return
     }
@@ -230,6 +237,18 @@ app.get('/comment', async (req, res) => {
     })
     console.log("GET Request")
     res.status(200).send(data)
+})
+
+app.post('/time', async (req, res) => {
+    let date = new Date(new Date(req.body.date).toDateString())
+
+    console.log(date)
+    console.log("POST Request: Comment Added")
+    res.status(200).send({ message: 'POST Success: Comment Added' })
+})
+
+app.get('/time', async (req, res) => {
+    res.send(new Date())
 })
 
 startDB().then(

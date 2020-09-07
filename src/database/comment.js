@@ -48,7 +48,7 @@ async function deleteComment(_id, pw) {
 }
 
 async function getComment(d) {
-    var date = new Date(new Date(d).toDateString())
+    var date = d//new Date(new Date(d).toDateString())
 
     const db = await getDB()
     let data = await db.collection(colName).find(
