@@ -3,34 +3,30 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 }
 
-// Importing external libraries
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const express = require('express')
-const helmet = require('helmet')
-const morgan = require('morgan')
-const moment = require('moment-timezone')
+import express from 'express'
+import bodyParser from 'body-parser'
+import cors from 'cors'
 
-// importing DB related scripts
-const { startDB } = require('./database/mongo')
-const { updateVote, getVote } = require('./database/vote')
-const { addComment, deleteComment, getComment } = require('./database/comment')
-const { ObjectID } = require('mongodb')
-
-// Importing vaild checker
-const { isBool,
-    isString,
-    isDate,
-    isRate,
-    isMD5,
-    isEmail,
-    isMealType,
-    isComment,
-    isQuery
-} = require('./modules/valid')
-const e = require('express')
+import * as test from './modules/valid.js'
+import moment from 'moment-timezone'
 
 const debug = true
+
+// Importing external libraries
+const cors = require('cors')
+const helmet = require('helmet')
+const morgan = require('morgan')
+
+// Importing local script functions
+const { startDB } = require('./database/mongo')
+const { updateVote } = require('./database/mealEntries')
+const { addComment, deleteComment, getComment } = require('./database/comment')
+
+const { isValidTime, isValidVote, isValidString, isValidMeal, isValidBool, isValidEmail, isValidComment, isValidQuery } = require('./parsing/parameters')
+const { checkAddEmail } = require('./database/emails')
+const { getTimeRange } = require('./time/time')
+const { ObjectID } = require('mongodb')
+
 
 // Initializing App
 const app = express()
@@ -46,71 +42,81 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+console.log(moment(moment()))
+
 /* POST */
 app.post('/vote', async (req, res) => {
     // Getting parameters from API
-    let date = moment(req.body.date).format('YYYY-MM-DD')
+    const b = req.body
+    let time = moment(b.time) //new Date(new Date(req.body.time).toDateString())
     let meal = req.body.meal
     let email = req.body.email
-    let rate = req.body.rate
+    let vote = req.body.vote
 
-    if (debug) {
-        console.log(date)
-        console.log(meal)
-        console.log(email)
-        console.log(rate)
-    }
+    // Debug
+    console.log(time)
+    // console.log(meal)
+    // console.log(email)
+    // console.log(vote)
 
-    if (!isDate(date)) {
-        callback(res, 400, 'POST Error: Invalid `date` json data.')
+    if (!test.time(time))
+
+        if (!isValidTime(time)) {
+            res.json({ message: 'POST Error: Invalid `time` json data' })
+            res.status(400)
+            return
+        }
+
+    time = { date: time, meal: meal }
+
+    if (!isValidVote(vote)) {
+        res.status(400)
+        res.send({ message: 'POST Error: Invalid `vote` json data' })
         return
     }
 
-    if (!isMealType(meal)) {
-        callback(res, 400, 'POST Error: Invalid `meal` json data.')
+    if (!isValidEmail(email)) {
+        res.status(400)
+        res.send({ message: 'POST Error: Invalid `email` format' })
         return
     }
 
-    if (!isEmail(email)) {
-        callback(res, 400, 'POST Error: Invalid `email` json data.')
-        return
-    }
-
-    if (!isRate(rate)) {
-        callback(res, 400, 'POST Error: Invalid `rate` json data.')
+    if (!(await checkAddEmail(email, time).catch(error => {
+        res.status(500)
+        res.send({ message: 'POST Error: MongoDB connection error - Collection: Emails' })
+        console.error(error)
+    }))) {
+        res.status(403)
+        res.send({ message: 'POST Error: Vote has already been registered with this email' })
         return
     }
 
     await updateVote(time, req.body.vote).catch(error => {
+        res.status(500)
+        res.send({ message: 'POST Error: MongoDB connection error - Collection: Voting' })
         console.error(error)
-        if (error == 403) {
-            callback(res, 403, 'POST Error: Vote has already been registered with this email.')
-        } else {
-            callback(res, 500, 'POST Error: MongoDB connection error - Collection: Voting.')
-        }
     })
-    callback(res, 200, 'POST Success: User rate has been successfully reflected.')
+    console.log("POST Request: Vote Added/Updated")
+    res.status(200).send({ message: 'POST Success: Vote Added/Updated' })
 })
 
 app.get('/vote', async (req, res) => {
     const query = req.query
     const keys = Object.keys(query)
 
-    if (isQuery(keys)) {
-        callback(res, 400, 'GET Error: Invalid parameters.')
+    if (isValidQuery(keys)) {
+        res.status(400)
+        res.send({ message: "GET Error: Invalid parameters" })
         return
     }
 
-    const data = await getVote(query).catch(error => {
+    const data = await getTimeRange(query).catch(error => {
         res.status(500)
-        res.send({ message: 'GET Error: MongoDB connection error - Collection: Voting.' })
+        res.send({ message: 'GET Error: MongoDB connection error - Collection: Voting' })
         console.error(error)
     })
-    console.log('GET Success: Vote data has been successfully returned.')
-    res.status(200).send(data)
+    res.send(data)
 })
-
-// ================ todo
 
 app.post('/comment', async (req, res) => {
     let date = new Date(new Date(req.body.date).toDateString())
@@ -246,10 +252,22 @@ app.get('/comment', async (req, res) => {
     res.status(200).send(data)
 })
 
-function callback(res, code, text) {
-    if (debug) {
+app.post('/time', async (req, res) => {
+    let date = new Date(new Date(req.body.date).toDateString())
+
+    console.log(date)
+    console.log("POST Request: Comment Added")
+    res.status(200).send({ message: 'POST Success: Comment Added' })
+})
+
+app.get('/time', async (req, res) => {
+    res.send(new Date())
+})
+
+function callback(res, text, code) {
+    if (debug)
         console.log(text)
-    }
+
     res.status(code).send({ message: text })
 }
 
