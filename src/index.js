@@ -26,8 +26,7 @@ const { isBool,
     isHexadecimal,
     isEmail,
     isMealType,
-    isComment,
-    isQuery
+    isComment
 } = require('./modules/valid')
 
 const debug = true
@@ -39,11 +38,6 @@ const app = express()
 // God im so mature
 const port = 6969
 
-//console.log(moment().format('YYYY-MM-DDT00:00:00Z'))
-//console.log(new Date(moment()))
-//console.log(moment('2020-09-09').format('YYYY-MM-DD'))
-//console.log(new Date(moment('2020-09-09').format('YYYY-MM-DD')))
-
 // Setting up app to use external libraries
 app.use(helmet())
 app.use(cors())
@@ -51,7 +45,7 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-/* POST */
+/* VOTE */
 app.post('/vote', async (req, res) => {
     // Getting parameters from API
     let date = new Date(moment(req.body.date).format('YYYY-MM-DD'))
@@ -96,6 +90,8 @@ app.post('/vote', async (req, res) => {
     })
     if (r) {
         callback(res, 200, 'POST Success: User rate has been successfully reflected.')
+    } else {
+        callback(res, 400, 'POST Error: Unknown Error.')
     }
 })
 
@@ -117,11 +113,12 @@ app.get('/vote', async (req, res) => {
     res.status(200).send(data)
 })
 
+/* COMMENT */
 app.post('/comment', async (req, res) => {
-    let date = moment(req.body.date) // moment
+    let date = new Date(moment(req.body.date).format('YYYY-MM-DD')) // Date
     let name = req.body.name // string
     let email = req.body.email //string
-    let pw = req.body.pw // MD5 string
+    let pw = req.body.pw // MD5 string  4a7d1ed414474e4033ac29ccb8653d9b
     let meal = req.body.meal // int
     let menu = req.body.menu // string
     let like = req.body.like // bool
@@ -144,6 +141,11 @@ app.post('/comment', async (req, res) => {
 
     if (!isString(name)) {
         callback(res, 400, 'POST Error: Invalid name.')
+        return
+    }
+
+    if (!isEmail(email)) {
+        callback(res, 400, 'POST Error: Invalid email.')
         return
     }
 
@@ -172,20 +174,23 @@ app.post('/comment', async (req, res) => {
         return
     }
 
-    await addComment(date, name, email, pw, meal, menu, like, comment).catch(error => {
+    const r = await addComment(date, name, email, pw, meal, menu, like, comment).catch(error => {
         if (error === 403) {
             callback(res, 403, 'POST Error: Vote has already been registered with this email.')
         } else {
             callback(res, 500, 'POST Error: MongoDB connection error - Collection: Comment.')
             console.error(error)
         }
-        return
     })
-    callback(res, 200, 'POST Success: Comment Added.')
+    if (r) {
+        callback(res, 200, 'POST Success: Comment Added.')
+    } else {
+        callback(res, 400, 'POST Error: Unknown Error.')
+    }
 })
 
 app.post('/delete_comment', async (req, res) => {
-    let id = ObjectID(req.body._id) // Hexadecimal
+    let id = ObjectID(req.body.id) // Hexadecimal
     let pw = req.body.pw // MD5
 
     if (!isHexadecimal(id)) {
@@ -198,28 +203,31 @@ app.post('/delete_comment', async (req, res) => {
         return
     }
 
-    await deleteComment(id, pw).catch(error => {
+    const r = await deleteComment(id, pw).catch(error => {
         if (error === 403) {
             callback(res, 403, 'POST Error: Cannot find the comment to delete.')
         } else {
             callback(res, 500, 'POST Error: MongoDB connection error - Collection: Comment.')
             console.error(error)
         }
-        return
     })
-    callback(res, 200, 'POST Success: Comment Removed.')
+    if (r) {
+        callback(res, 200, 'POST Success: Comment Removed.')
+    } else {
+        callback(res, 400, 'POST Error: Unknown Error.')
+    }
 })
 
 app.get('/comment', async (req, res) => {
-    const query = req.query
-    const dates = Object.keys(query)
+    let date1 = new Date(moment(req.body.date1).format('YYYY-MM-DD'))
+    let date2 = new Date(moment(req.body.date2).format('YYYY-MM-DD'))
 
-    if (!isQuery(dates)) {
+    if (!isDate(date1) || !isDate(date2)) {
         callback(res, 400, 'GET Error: Invalid parameters.')
         return
     }
 
-    let data = await getComment(query).catch(error => {
+    let data = await getComment(date1, date2).catch(error => {
         callback(res, 500, 'POST Error: MongoDB connection error - Collection: Comment.')
         console.error(error)
         return

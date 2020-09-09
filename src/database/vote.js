@@ -1,5 +1,4 @@
 const { getDB } = require('./mongo')
-const moment = require('moment-timezone')
 const { ObjectID } = require('mongodb')
 const colName = 'Voting'
 

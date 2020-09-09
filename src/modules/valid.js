@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const moment = require('moment-timezone')
 
 const debug = true
@@ -26,7 +25,7 @@ function isDate(date) {
         log('Err: Invalid date format, value provided is not in a recognized RFC2822 or ISO format.')
         return false
     }
-    if (date == 'Invalid date' || typeof (date) !== 'object') {
+    if (date instanceof Date && isNaN(date)) {
         log('Err: Invalid date')
         return false
     }
@@ -62,7 +61,7 @@ function isMD5(key) {
 }
 
 function isHexadecimal(hex) {
-    const hexRegex = RegExp('^[a-f0-9]{32}$')
+    const hexRegex = RegExp('^[a-f0-9]{24}$')
     if (hex === undefined) {
         log('Err: Invalid Hexadecimal, undifined')
         return false
@@ -100,23 +99,10 @@ function isComment(text) {
     if (text === undefined || typeof (text) !== 'string') {
         log('Err: Invalid comment, not match with format')
         return false
-    } else if (text.length < 10 && text.length > 500) {
+    } else if (text.length < 10 || text.length > 500) {
         log('Err: Invalid comment, out of range')
         return false
     }
-    return true
-}
-
-function isQuery(arr) {
-    arr.forEach(item => {
-        if (item === undefined) {
-            log('Err: Invalid query')
-            return false
-        } else if (!isDate(item)) {
-            log('Err: Invalid date format')
-            return false
-        }
-    });
     return true
 }
 
@@ -134,6 +120,5 @@ module.exports = {
     isHexadecimal,
     isEmail,
     isMealType,
-    isComment,
-    isQuery
+    isComment
 }
