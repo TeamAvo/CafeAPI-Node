@@ -1,14 +1,14 @@
 const { getDB } = require('./mongo')
 const colName = 'Comment'
 
-async function addComment(date, name, email, pw, meal_type, menu, like, comment) {
+async function addComment(date, name, email, pw, meal, menu, like, comment) {
     const db = await getDB()
 
     let item = await db.collection(colName).findOne(
         {
             date: date,
             email: email,
-            meal_type: meal_type
+            meal: meal
         }
     )
 
@@ -19,7 +19,7 @@ async function addComment(date, name, email, pw, meal_type, menu, like, comment)
                 name: name,
                 email: email,
                 pw: pw,
-                meal_type: meal_type,
+                meal: meal,
                 menu: menu,
                 like: like,
                 comment: comment
