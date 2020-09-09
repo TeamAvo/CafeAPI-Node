@@ -1,4 +1,5 @@
 const { getDB } = require('./mongo')
+const moment = require('moment-timezone')
 
 const colName = 'Comment'
 
@@ -47,15 +48,17 @@ async function deleteComment(_id, pw) {
     await db.collection(colName).deleteOne(item)
 }
 
-async function getComment(d) {
-    var date = d//new Date(new Date(d).toDateString())
-
+async function getComment(date1, date2) {
     const db = await getDB()
-    let data = await db.collection(colName).find(
-        { date: date }
+    let result = await db.collection(colName).find(
+        {
+            date: {
+                $gte: new Date(date1),
+                $lt: new Date(date2)
+            }
+        }
     ).toArray()
-
-    return data
+    return result
 }
 
 module.exports = {

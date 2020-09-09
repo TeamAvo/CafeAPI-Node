@@ -20,11 +20,14 @@ function isString(str) {
 }
 
 function isDate(date) {
-    let d
     try {
-        d = moment(date)
+        moment(date)
     } catch{
         log('Err: Invalid date format, value provided is not in a recognized RFC2822 or ISO format.')
+        return false
+    }
+    if (date == 'Invalid date' || typeof (date) !== 'object') {
+        log('Err: Invalid date')
         return false
     }
 
@@ -49,10 +52,22 @@ function isRate(rate) {
 function isMD5(key) {
     const md5Regex = RegExp('^[a-f0-9]{32}$')
     if (key === undefined) {
-        log('Err: Invalid md5, undifined')
+        log('Err: Invalid MD5, undifined')
         return false
     } else if (!md5Regex.test(key)) {
-        log('Err: Invalid md5, not md5 pattern')
+        log('Err: Invalid MD5, not MD5 pattern')
+        return false
+    }
+    return true
+}
+
+function isHexadecimal(hex) {
+    const hexRegex = RegExp('^[a-f0-9]{32}$')
+    if (hex === undefined) {
+        log('Err: Invalid Hexadecimal, undifined')
+        return false
+    } else if (!hexRegex.test(hex)) {
+        log('Err: Invalid Hexadecimal, not Hexadecimal pattern')
         return false
     }
     return true
@@ -97,6 +112,9 @@ function isQuery(arr) {
         if (item === undefined) {
             log('Err: Invalid query')
             return false
+        } else if (!isDate(item)) {
+            log('Err: Invalid date format')
+            return false
         }
     });
     return true
@@ -113,6 +131,7 @@ module.exports = {
     isDate,
     isRate,
     isMD5,
+    isHexadecimal,
     isEmail,
     isMealType,
     isComment,
