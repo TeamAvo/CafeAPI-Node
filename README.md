@@ -35,6 +35,7 @@ Request: `/vote`
  - 403: Vote has already been registered with this email.
  - 500: MongoDB connection error
 
+_ _ _
 
 ### Get Vote
 Type: GET  
@@ -132,6 +133,7 @@ Request: `/comment`
  - 403: Vote has already been registered with this email.
  - 500: MongoDB connection error
 
+_ _ _
 
 ### Delete Comment
 Type: POST  
@@ -159,6 +161,7 @@ Request: `/comment`
  - 403: Vote has already been registered with this email.
  - 500: MongoDB connection error
 
+_ _ _
 
 ### Get Comment
 Type: GET  
