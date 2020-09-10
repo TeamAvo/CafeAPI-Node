@@ -52,14 +52,13 @@ async function updateVote(date, meal, email, rate) {
 
 async function getVote(date1, date2) {
     const db = await getDB()
-    // [TODO] exclude _id and email array from the result
     let result = await db.collection(colName).find(
         {
             date: {
                 $gte: new Date(date1),
                 $lt: new Date(date2)
             }
-        }
+        }, { projection: { _id: 0, email: 0 } }
     ).toArray()
     return result
 }

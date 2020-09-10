@@ -93,8 +93,6 @@ app.post('/vote', async (req, res) => {
   if (r) {
     callback(res, 200, 'POST Success: User rate has been successfully reflected.'
     )
-  } else {
-    callback(res, 400, 'POST Error: Unknown Error.')
   }
 })
 
@@ -192,8 +190,6 @@ app.post('/comment', async (req, res) => {
   })
   if (r) {
     callback(res, 200, 'POST Success: Comment Added.')
-  } else {
-    callback(res, 400, 'POST Error: Unknown Error.')
   }
 })
 
@@ -221,8 +217,6 @@ app.post('/delete_comment', async (req, res) => {
   })
   if (r) {
     callback(res, 200, 'POST Success: Comment Removed.')
-  } else {
-    callback(res, 400, 'POST Error: Unknown Error.')
   }
 })
 

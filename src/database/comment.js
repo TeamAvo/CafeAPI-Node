@@ -48,14 +48,13 @@ async function deleteComment(id, pw) {
 
 async function getComment(date1, date2) {
     const db = await getDB()
-    // [TODO] exclude pw
     let result = await db.collection(colName).find(
         {
             date: {
                 $gte: new Date(date1),
                 $lt: new Date(date2)
             }
-        }
+        }, { projection: { pw: 0 } }
     ).toArray()
     return result
 }
