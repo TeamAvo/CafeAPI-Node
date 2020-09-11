@@ -1,3 +1,5 @@
+// Backend Ver: v2.0.1
+
 // Importing Environmental Variables
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -30,7 +32,7 @@ const {
   isComment
 } = require('./modules/valid')
 
-const debug = true
+const debug = false
 
 // Initializing App
 const app = express()
@@ -195,10 +197,22 @@ app.post('/comment', async (req, res) => {
 
 app.post('/delete_comment', async (req, res) => {
   let id = ObjectID(req.body.id) // Hexadecimal
+  let email = req.body.email
   let pw = req.body.pw // MD5
+
+  if (debug) {
+    console.log(id)
+    console.log(email)
+    console.log(pw)
+  }
 
   if (!isHexadecimal(id)) {
     callback(res, 400, 'POST Error: Invalid comment id.')
+    return
+  }
+
+  if (!isEmail(email)) {
+    callback(res, 400, 'POST Error: Invalid email.')
     return
   }
 
@@ -207,7 +221,7 @@ app.post('/delete_comment', async (req, res) => {
     return
   }
 
-  const r = await deleteComment(id, pw).catch((error) => {
+  const r = await deleteComment(id, email, pw).catch((error) => {
     if (error === 403) {
       callback(res, 403, 'POST Error: Cannot find the comment to delete.')
     } else {
@@ -244,9 +258,9 @@ app.get('/comment', async (req, res) => {
 })
 
 function callback(res, code, text) {
-  if (debug) {
-    console.log(text)
-  }
+  //if (debug) {
+  console.log(text)
+  //}
   res.status(code).send({ message: text })
 }
 

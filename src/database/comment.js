@@ -31,11 +31,12 @@ async function addComment(date, name, email, pw, meal, menu, like, comment) {
     }
 }
 
-async function deleteComment(id, pw) {
+async function deleteComment(id, email, pw) {
     const db = await getDB()
     let item = await db.collection(colName).findOne(
         {
             _id: id,
+            email: email,
             pw: pw,
         }
     )

@@ -143,6 +143,7 @@ Request: `/comment`
 ```json
 {
     "id":"ID from mongodb, ObjectID",
+    "email":"User Email, @avonoldfarms.com",
     "pw":"String, MD5 encrypted password"
 }
 ```
@@ -151,6 +152,7 @@ Request: `/comment`
 ```json
 {
     "id":"5f59080a5923552004a899f3",
+    "email":"test1@avonoldfarms.com",
     "pw":"4a7d1ed414474e4033ac29ccb8653d9b"
 }
 ```
