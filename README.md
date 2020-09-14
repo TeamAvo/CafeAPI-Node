@@ -1,6 +1,8 @@
 # CafeAPI - Backend
 This is a node.js + express.js + MongoDB api that counts votes. The votes represent the students opinions of the schools meals. Showing the opinions surrounding the food allows students to judge if the meal is worth going to.
 
+ver: v2.0.3
+
 # Requests and Responses
 
 ## Vote

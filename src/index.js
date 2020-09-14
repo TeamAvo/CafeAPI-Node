@@ -1,4 +1,4 @@
-// Backend Ver: v2.0.1
+// Backend Ver: v2.0.3
 
 // Importing Environmental Variables
 if (process.env.NODE_ENV !== 'production') {
@@ -32,7 +32,7 @@ const {
   isComment
 } = require('./modules/valid')
 
-const debug = false
+const debug = true
 
 // Initializing App
 const app = express()
@@ -51,7 +51,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 /* VOTE */
 app.post('/vote', async (req, res) => {
   // Getting parameters from API
-  let date = new Date(moment(req.body.date).format('YYYY-MM-DD'))
+  let date = new Date(moment(req.body.date).tz('America/New_York').format('YYYY-MM-DD'))
   let meal = req.body.meal
   let email = req.body.email
   let rate = req.body.rate
@@ -99,8 +99,8 @@ app.post('/vote', async (req, res) => {
 })
 
 app.get('/vote', async (req, res) => {
-  let date1 = new Date(moment(req.query.date1).format('YYYY-MM-DD'))
-  let date2 = new Date(moment(req.query.date2).format('YYYY-MM-DD'))
+  let date1 = new Date(moment(req.query.date1).tz('America/New_York').format('YYYY-MM-DD'))
+  let date2 = new Date(moment(req.query.date2).tz('America/New_York').format('YYYY-MM-DD'))
 
   if (debug) {
     console.log(date1)
@@ -123,7 +123,7 @@ app.get('/vote', async (req, res) => {
 
 /* COMMENT */
 app.post('/comment', async (req, res) => {
-  let date = new Date(moment(req.body.date).format('YYYY-MM-DD')) // Date
+  let date = new Date(moment(req.body.date).tz('America/New_York').format('YYYY-MM-DD')) // Date
   let name = req.body.name // string
   let email = req.body.email //string
   let pw = req.body.pw // MD5 string  4a7d1ed414474e4033ac29ccb8653d9b
@@ -235,8 +235,8 @@ app.post('/delete_comment', async (req, res) => {
 })
 
 app.get('/comment', async (req, res) => {
-  let date1 = new Date(moment(req.query.date1).format('YYYY-MM-DD'))
-  let date2 = new Date(moment(req.query.date2).format('YYYY-MM-DD'))
+  let date1 = new Date(moment(req.query.date1).tz('America/New_York').format('YYYY-MM-DD'))
+  let date2 = new Date(moment(req.query.date2).tz('America/New_York').format('YYYY-MM-DD'))
 
   if (debug) {
     console.log(date1)
